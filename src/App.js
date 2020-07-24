@@ -6,28 +6,18 @@ import { render } from '@testing-library/react';
 import Header from './components/layout/Header';
 import AddTodo from './components/AddTodo';
 import about from './components/pages/about';
-import uuid from 'react-uuid';
+// import uuid from 'react-uuid';
+import axios from 'axios';
 
 
 class App extends Component {
   state = {
-    todos: [
-      {
-        id: uuid(),
-        title: "Take out the trash",
-        completed: false
-      },
-      {
-        id: uuid(),
-        title: "Dinner with the wife",
-        completed: false
-      },
-      {
-        id: uuid(),
-        title: "Go grocery shopping",
-        completed: true
-      }
-    ]
+    todos: []
+  }
+
+  componentDidMount() {
+    axios.get('http://jsonplaceholder.typicode.com/todos?_limit=10')
+      .then(res => this.setState({ todos: res.data }))
   }
 
   // Toggle completion
@@ -49,12 +39,17 @@ class App extends Component {
 
   //Add Todo
   addTodo = (title) => {
-    const newTodo = {
-      id: uuid(),
+    // const newTodo = {
+    //   id: uuid(),
+    //   title,
+    //   completed: false
+    // }
+    axios.post('http://jsonplaceholder.typicode.com/todos', {
       title,
       completed: false
-    }
-    this.setState({ todos: [...this.state.todos, newTodo] });
+    })
+      .then(res => this.setState({ todos: [...this.state.todos, res.data] }));
+
   }
 
   render() {
